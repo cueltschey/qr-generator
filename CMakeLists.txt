@@ -1,22 +1,22 @@
 cmake_minimum_required(VERSION 3.10)
 project(qr-gen)
 
-# Set C++ standard
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-# Add the include directories (hdr folder)
 include_directories(hdr)
 
-# Find the GTK+3 package
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(GTK3 REQUIRED gtk+-3.0)
 
-# Add include directories for GTK
+set(CMAKE_CXX_FLAGS "-Wall")
+
 include_directories(${GTK3_INCLUDE_DIRS})
 
+file(GLOB SOURCES src/*.cc)
+
 # Add the executable target
-add_executable(qr-gen src/main.cc)
+add_executable(qr-gen ${SOURCES})
 
 # Link GTK3 to the executable
 target_link_libraries(qr-gen ${GTK3_LIBRARIES})

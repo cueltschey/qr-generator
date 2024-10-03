@@ -4,20 +4,14 @@
 #include <ctime>
 #include <iostream>
 
-int SQUARE_SIZE = 10;
+#include "encoding.h"
+#include "qr.h"
 
+// smallest QR code
 
-std::vector<std::vector<int>> generate_random_matrix(int rows, int cols) {
-    std::vector<std::vector<int>> matrix(rows, std::vector<int>(cols));
-    std::srand(std::time(0));
+#define GRID_SIZE  33
+#define SQUARE_SIZE  800 / GRID_SIZE
 
-    for (int i = 0; i < rows; ++i) {
-        for (int j = 0; j < cols; ++j) {
-            matrix[i][j] = std::rand() % 2;
-        }
-    }
-    return matrix;
-}
 
 gboolean on_draw_event(GtkWidget *widget, cairo_t *cr, gpointer user_data) {
     auto* data = static_cast<std::pair<std::vector<std::vector<int>>*, int>*>(user_data);
@@ -39,22 +33,32 @@ gboolean on_draw_event(GtkWidget *widget, cairo_t *cr, gpointer user_data) {
 }
 
 int main(int argc, char *argv[]) {
-    int GRID_SIZE = 21;
 
-    if (argc > 1) {
-        GRID_SIZE = std::atoi(argv[1]);
-        if (GRID_SIZE <= 0) {
-            std::cerr << "Invalid grid size provided. Using default size of 21." << std::endl;
-            GRID_SIZE = 21;
-        }
+
+    // Arguments
+    if(argc < 2){
+      std::cerr << "Usage: qr-gen <string to encode>" << std::endl;
+      return 1;
     }
 
-    SQUARE_SIZE = 900 / GRID_SIZE;
+    std::string input_alphanumeric = argv[1];
+
+    std::cout << "Encoded Bytes: ";
+    std::vector<int> encoded_bits = encode_alphanumeric(input_alphanumeric);
+    for(int i = 0; i < (int)encoded_bits.size(); i++){
+      std::cout << encoded_bits[i];
+      if((i + 1) % 8 == 0){
+        std::cout << " ";
+      }
+    }
+    std::cout << std::endl;
 
     gtk_init(&argc, &argv);
 
-    std::vector<std::vector<int>> grid_matrix = generate_random_matrix(GRID_SIZE, GRID_SIZE);
+    std::vector<std::vector<int>> grid_matrix = init_qr(GRID_SIZE);
 
+
+    // initialize GUI
     GtkWidget *window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     gtk_window_set_title(GTK_WINDOW(window), "Generated QR");
     gtk_window_set_default_size(GTK_WINDOW(window), GRID_SIZE * SQUARE_SIZE, GRID_SIZE * SQUARE_SIZE);
