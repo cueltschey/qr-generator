@@ -9,8 +9,7 @@
 
 // smallest QR code
 
-#define GRID_SIZE  33
-#define SQUARE_SIZE  800 / GRID_SIZE
+#define SQUARE_SIZE 35
 
 
 gboolean on_draw_event(GtkWidget *widget, cairo_t *cr, gpointer user_data) {
@@ -34,7 +33,6 @@ gboolean on_draw_event(GtkWidget *widget, cairo_t *cr, gpointer user_data) {
 
 int main(int argc, char *argv[]) {
 
-
     // Arguments
     if(argc < 2){
       std::cerr << "Usage: qr-gen <string to encode>" << std::endl;
@@ -55,19 +53,21 @@ int main(int argc, char *argv[]) {
 
     gtk_init(&argc, &argv);
 
-    std::vector<std::vector<int>> grid_matrix = init_qr(GRID_SIZE);
+    qr::qr_code generated_qr = qr::init_qr(qr::qr_type_options::QR_MODEL_2, qr::data_type_options::ALPHANUMERIC);
+
+    encode_data(encoded_bits, generated_qr);
 
 
     // initialize GUI
     GtkWidget *window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     gtk_window_set_title(GTK_WINDOW(window), "Generated QR");
-    gtk_window_set_default_size(GTK_WINDOW(window), GRID_SIZE * SQUARE_SIZE, GRID_SIZE * SQUARE_SIZE);
+    gtk_window_set_default_size(GTK_WINDOW(window), generated_qr.grid_size * SQUARE_SIZE, generated_qr.grid_size * SQUARE_SIZE);
     g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
 
     GtkWidget *drawing_area = gtk_drawing_area_new();
-    gtk_widget_set_size_request(drawing_area, GRID_SIZE * SQUARE_SIZE, GRID_SIZE * SQUARE_SIZE);
+    gtk_widget_set_size_request(drawing_area, generated_qr.grid_size * SQUARE_SIZE, generated_qr.grid_size * SQUARE_SIZE);
 
-    auto *data = new std::pair<std::vector<std::vector<int>>*, int>(&grid_matrix, GRID_SIZE);
+    auto *data = new std::pair<std::vector<std::vector<int>>*, int>(&generated_qr.matrix, generated_qr.grid_size);
     g_signal_connect(G_OBJECT(drawing_area), "draw", G_CALLBACK(on_draw_event), data);
 
     gtk_container_add(GTK_CONTAINER(window), drawing_area);

@@ -2,8 +2,11 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <algorithm>
 
-std::vector<int> encode_alphanumeric(const std::string &alphanumeric){
+std::vector<int> encode_alphanumeric(std::string alphanumeric){
+
+  std::reverse(alphanumeric.begin(), alphanumeric.end());
   std::vector<int> bitstream;
   const char* data = alphanumeric.c_str();
   int l = alphanumeric.length();
@@ -15,5 +18,6 @@ std::vector<int> encode_alphanumeric(const std::string &alphanumeric){
     }
   }
 
+  std::reverse(bitstream.begin(), bitstream.end());
   return bitstream;
 }
