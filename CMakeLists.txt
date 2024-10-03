@@ -16,11 +16,11 @@ pkg_check_modules(GTK3 REQUIRED gtk+-3.0)
 include_directories(${GTK3_INCLUDE_DIRS})
 
 # Add the executable target
-add_executable(grid_of_squares src/main.cc)
+add_executable(qr-gen src/main.cc)
 
 # Link GTK3 to the executable
-target_link_libraries(grid_of_squares ${GTK3_LIBRARIES})
+target_link_libraries(qr-gen ${GTK3_LIBRARIES})
 
 # Additional flags (if needed)
-target_compile_options(grid_of_squares PRIVATE ${GTK3_CFLAGS_OTHER})
+target_compile_options(qr-gen PRIVATE ${GTK3_CFLAGS_OTHER})
 
