@@ -45,8 +45,8 @@ namespace qr {
     bound_l = generated_qr.grid_size - 9;
     bound_r = generated_qr.grid_size - 4;
 
-    bound_t = generated_qr.grid_size - 8;
-    bound_b = generated_qr.grid_size - 3;
+    bound_t = generated_qr.grid_size - 9;
+    bound_b = generated_qr.grid_size - 4;
 
     insert_position_square(matrix, bound_l, bound_r, bound_t, bound_b);
 
@@ -168,13 +168,41 @@ namespace qr {
 
     bool wrap_triggered = false;
 
+
     for(uint32_t bit_index = 0; bit_index + 1 < generated_qr.bitstream.size(); bit_index += 2){
-      std::cout << "x: " << x << "y: " << y << " : " << generated_qr.bitstream[bit_index] << std::endl;
-      generated_qr.matrix[x][y] = generated_qr.bitstream[bit_index];
-      generated_qr.matrix[x][y - 1] = generated_qr.bitstream[bit_index + 1];
-      if((x <= 9 || x >= generated_qr.grid_size - 1) && !wrap_triggered){
+      if(x == 6){
+        if(direction){
+          x--;
+        } else {
+          x++;
+        }
+        bit_index -= 2;
+        continue;
+      }
+      if(
+          (y >= generated_qr.grid_size - 9 && y <= generated_qr.grid_size - 4) 
+          &&
+          (x >= generated_qr.grid_size - 9 && x < generated_qr.grid_size - 4)
+          ){
+        if(y - 1 < generated_qr.grid_size - 9){
+          generated_qr.matrix[x][y - 1] = generated_qr.bitstream[bit_index];
+          bit_index -= 1;
+        } else {
+          bit_index -= 2;
+        }
+      } else{
+        generated_qr.matrix[x][y] = generated_qr.bitstream[bit_index];
+        generated_qr.matrix[x][y - 1] = generated_qr.bitstream[bit_index + 1];
+      }
+
+      // wrap if encountering edge or position square
+      if(
+          (x <= 9 && (y >= generated_qr.grid_size - 7 || y <= 7) 
+           || x >= generated_qr.grid_size - 1 
+           || x <= 0) 
+          && !wrap_triggered
+          ){
         wrap_triggered = true;
-        std::cout << direction << std::endl;
         y -= 2;
         direction = !direction;
       } else{
