@@ -9,7 +9,7 @@ include_directories(hdr)
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(GTK3 REQUIRED gtk+-3.0)
 
-set(CMAKE_CXX_FLAGS "-Wall")
+set(CMAKE_CXX_FLAGS "-Wall -g")
 
 include_directories(${GTK3_INCLUDE_DIRS})
 

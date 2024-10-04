@@ -158,7 +158,7 @@ namespace qr {
   }
 
 
-  void encode_data(std::vector<int> bitstream, qr_code &generated_qr){
+  void encode_data(std::vector<int> bitstream, std::vector<int> error_bitstream, qr_code &generated_qr){
     generated_qr.bitstream = bitstream;
 
     uint32_t x = generated_qr.grid_size - 7;
@@ -217,6 +217,57 @@ namespace qr {
         x++;
       }
     }
+
+
+    for(uint32_t bit_index = 0; bit_index + 1 < error_bitstream.size(); bit_index += 2){
+      if(x == 6){
+        if(direction){
+          x--;
+        } else {
+          x++;
+        }
+        bit_index -= 2;
+        continue;
+      }
+      if(
+          (y >= generated_qr.grid_size - 9 && y <= generated_qr.grid_size - 4) 
+          &&
+          (x >= generated_qr.grid_size - 9 && x < generated_qr.grid_size - 4)
+          ){
+        if(y - 1 < generated_qr.grid_size - 9){
+          generated_qr.matrix[x][y - 1] = error_bitstream[bit_index];
+          bit_index -= 1;
+        } else {
+          bit_index -= 2;
+        }
+      } else{
+        generated_qr.matrix[x][y] = error_bitstream[bit_index];
+        generated_qr.matrix[x][y - 1] = error_bitstream[bit_index + 1];
+      }
+
+      // wrap if encountering edge or position square
+      if(
+          (x <= 9 && (y >= generated_qr.grid_size - 7 || y <= 7) 
+           || x >= generated_qr.grid_size - 1 
+           || x <= 0) 
+          && !wrap_triggered
+          ){
+        wrap_triggered = true;
+        y -= 2;
+        direction = !direction;
+      } else{
+        wrap_triggered = false;
+      }
+      if(wrap_triggered){
+        continue;
+      }
+      if(direction){
+        x--;
+      } else{
+        x++;
+      }
+    }
+
   }
 
 }

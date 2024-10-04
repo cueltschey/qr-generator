@@ -37,6 +37,7 @@ namespace qr {
   qr_code init_qr(qr_type_options qr_type, data_type_options data_type);
   void insert_position_square(std::vector<std::vector<int>> &matrix, uint32_t bound_l, uint32_t bound_r, uint32_t bound_t, uint32_t bound_b);
   void encode_data(std::vector<int> bitstream, qr_code &generated_qr);
+  void encode_data(std::vector<int> bitstream, std::vector<int> error_bitstream, qr_code &generated_qr);
 
   uint32_t init_qr_code_size(qr_type_options type);
 }

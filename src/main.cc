@@ -43,6 +43,7 @@ int main(int argc, char *argv[]) {
 
     std::cout << "Encoded Bytes: ";
     std::vector<int> encoded_bits = encode_alphanumeric(input_alphanumeric);
+    std::vector<int> error_correction_bits = encode_error_protection(encoded_bits);
     for(int i = 0; i < (int)encoded_bits.size(); i++){
       std::cout << encoded_bits[i];
       if((i + 1) % 8 == 0){
@@ -55,7 +56,7 @@ int main(int argc, char *argv[]) {
 
     qr::qr_code generated_qr = qr::init_qr(qr::qr_type_options::QR_MODEL_2, qr::data_type_options::ALPHANUMERIC);
 
-    encode_data(encoded_bits, generated_qr);
+    encode_data(encoded_bits, error_correction_bits, generated_qr);
 
 
     // initialize GUI
