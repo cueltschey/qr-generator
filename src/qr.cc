@@ -170,15 +170,6 @@ namespace qr {
 
 
     for(uint32_t bit_index = 0; bit_index + 1 < generated_qr.bitstream.size(); bit_index += 2){
-      if(x == 6){
-        if(direction){
-          x--;
-        } else {
-          x++;
-        }
-        bit_index -= 2;
-        continue;
-      }
       if(
           (y >= generated_qr.grid_size - 9 && y <= generated_qr.grid_size - 4) 
           &&
@@ -220,15 +211,6 @@ namespace qr {
 
 
     for(uint32_t bit_index = 0; bit_index + 1 < error_bitstream.size(); bit_index += 2){
-      if(x == 6){
-        if(direction){
-          x--;
-        } else {
-          x++;
-        }
-        bit_index -= 2;
-        continue;
-      }
       if(
           (y >= generated_qr.grid_size - 9 && y <= generated_qr.grid_size - 4) 
           &&
@@ -267,9 +249,7 @@ namespace qr {
         x++;
       }
     }
-
   }
-
 }
 
 

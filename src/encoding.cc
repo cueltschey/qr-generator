@@ -29,26 +29,35 @@ std::vector<int> encode_alphanumeric(std::string alphanumeric){
   return bitstream;
 }
 
-std::vector<int> encode_error_protection(std::vector<int> bitstream){
+std::vector<int> encode_error_protection(std::vector<int> bitstream) {
+    int bits = 8;   // RS_WORD is typically 8 bits.
+    int k = 16;     // Number of data words.
+    int nsym = 10;  // Number of error-correction symbols (e.g., 10 symbols for QR codes).
 
-	int bits = 8, k = 16, nsym = 10;
-  RS_WORD* input = new unsigned long[bitstream.size()];
-  RS_WORD* output = new unsigned long[bitstream.size()];
+    // Create input array from bitstream
+    RS_WORD* input = new unsigned long[bitstream.size()];
+    for (size_t i = 0; i < bitstream.size(); ++i) {
+        input[i] = static_cast<unsigned long>(bitstream[i]);
+    }
 
-  for (size_t i = 0; i < bitstream.size(); ++i) {
-      input[i] = static_cast<unsigned long>(bitstream[i]);
-  }
-	Poly msg(k, input);
-	Poly a(k + nsym, input);
-	ReedSolomon rs(bits);
-	rs.encode(a.coef, input, k, nsym);
+    // Reed-Solomon encoding
+    Poly msg(k, input);
+    Poly a(k + nsym, input);
+    ReedSolomon rs(bits);
+    rs.encode(a.coef, input, k, nsym);
 
-  std::vector<int> result;
-  for(size_t i = 0; i < bitstream.size(); i++){
-    result.push_back(static_cast<int> (a.coef[i]));
-  }
-  delete[] input;
-  delete[] output;
+    // Convert the Reed-Solomon output to a vector of 1s and 0s
+    std::vector<int> result;
+    for (size_t i = 0; i < k + nsym; i++) {
+        RS_WORD encoded_byte = a.coef[i];
+        for (int bit = 7; bit >= 0; --bit) {
+            // Extract each bit from the byte
+            result.push_back((encoded_byte >> bit) & 1);
+        }
+    }
 
-  return result;
+    // Cleanup
+    delete[] input;
+
+    return result;
 }
