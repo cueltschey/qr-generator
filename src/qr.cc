@@ -229,12 +229,13 @@ namespace qr {
 
       // wrap if encountering edge or position square
       if(
-          (x <= 9 && (y >= generated_qr.grid_size - 7 || y <= 7) 
+          ((x <= 7 || x >= generated_qr.grid_size - 8) && (y >= generated_qr.grid_size - 7 || y <= 7) 
            || x >= generated_qr.grid_size - 1 
            || x <= 0) 
           && !wrap_triggered
           ){
         wrap_triggered = true;
+        std::cout << y << " : " << x << std::endl;
         if(y <= 8){
           x = 7;
         }
