@@ -25,7 +25,13 @@ std::vector<int> encode_alphanumeric(std::string alphanumeric){
     }
   }
 
+
   std::reverse(bitstream.begin(), bitstream.end());
+
+  for(int j = 0; j < 4; j++){
+    bitstream.push_back(0);
+  }
+
   return bitstream;
 }
 
@@ -52,7 +58,8 @@ std::vector<int> encode_error_protection(std::vector<int> bitstream) {
         RS_WORD encoded_byte = a.coef[i];
         for (int bit = 7; bit >= 0; --bit) {
             // Extract each bit from the byte
-            result.push_back((encoded_byte >> bit) & 1);
+            //result.push_back((encoded_byte >> bit) & 1);
+            result.push_back(1);
         }
     }
 

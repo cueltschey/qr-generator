@@ -190,7 +190,7 @@ namespace qr {
       if(
           (x <= 9 && (y >= generated_qr.grid_size - 7 || y <= 7) 
            || x >= generated_qr.grid_size - 1 
-           || x <= 0) 
+           || x <= 0)
           && !wrap_triggered
           ){
         wrap_triggered = true;
@@ -235,6 +235,9 @@ namespace qr {
           && !wrap_triggered
           ){
         wrap_triggered = true;
+        if(y <= 8){
+          x = 7;
+        }
         y -= 2;
         direction = !direction;
       } else{
